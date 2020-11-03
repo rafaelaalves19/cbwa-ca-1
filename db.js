@@ -4,6 +4,7 @@ const MONGO_OPTIONS = { useUnifiedTopology: true, useNewUrlParser: true };
 const DB_NAME = 'cbwa-ca-1';
 
 module.exports = () => {
+
     const get = (collectionName, query = {}) => {
         return new Promise((resolve, reject) => {
             MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
@@ -16,6 +17,8 @@ module.exports = () => {
             });
         });
     };
+
+
     const add = (collectionName, item) => {
         return new Promise((resolve, reject) => {
             MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
@@ -28,8 +31,55 @@ module.exports = () => {
             });
         });
     };
+
+
+    const count = (collectionName) => {
+        return new Promise((resolve, reject) => {
+            MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
+                const db = client.db(DB_NAME);
+                const collection = db.collection(collectionName);
+                collection.countDocuments({}, (err, result) => {
+                    resolve(result);
+                    client.close();
+                });
+            });
+        });
+    };
+
+
+    const update = (collectionName, pipeline) => {
+        return new Promise((resolve, reject) => {
+            MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
+                const db = client.db(DB_NAME);
+                const collection = db.collection(collectionName);
+                collection.updateOne(pipeline[0], pipeline[1], (err, result) => {
+                    resolve(result);
+                    client.close();
+                });
+            });
+        });
+    };
+
+
+    const aggregate = (collectionName, pipeline = []) => {
+        return new Promise((resolve, reject) => {
+            MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
+                const db = client.db(DB_NAME);
+                const collection = db.collection(collectionName);
+                collection.aggregate(pipeline).toArray((err, docs) => {
+                    resolve(docs);
+                    client.close();
+                })
+            });
+        });
+    };
+
+
     return {
         get,
         add, 
+        count,
+        update,
+        aggregate
     };
 };
