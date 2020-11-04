@@ -30,7 +30,7 @@ module.exports = () => {
                          input: '$comments',
                          as: 'comment',
                          cond: {$eq: ['$$comment._id', ObjectID(commentId)] },
-                        },
+                 },
                     },
                     _id: 0,
                     slug: 1,
